@@ -19,44 +19,55 @@ app.use(cors());
 app.use(express.json());
 
 app.post('/skynetapi', async (req, res) => {
-  const apiToken = req.headers['authorization'];
-  if (!apiToken || apiToken !== `Bearer ${VALID_API_TOKEN}`) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-  const param = req.body.param;
-  try {
-const results = await UserInterests.findAll({
-  where: Sequelize.literal(`
-    EXISTS (
-      SELECT 1
-      FROM json_each(interests)
-      WHERE json_each.value IN (${param.map(i => `'${i}'`).join(",")})
-    )
-  `)
-});
-  let geminiProfile = await generate(prompts.analysis(results, param));
-  res.json(JSON.parse(geminiProfile.candidates[0].content.parts[0].text));
-  } catch (error) {
-    console.error('Error querying database:', error);
-    return res.status(500).json({ error: 'Internal Server Error' });
-  }
+	const apiToken = req.headers['authorization'];
+	if (!apiToken || apiToken !== `Bearer ${VALID_API_TOKEN}`)
+		return res.status(401).json({ error: 'Unauthorized' });
+
+	const param = req.body.param;
+	try
+	{
+		const results = await UserInterests.findAll(
+		{
+			where: Sequelize.literal(`
+			EXISTS (
+			SELECT 1
+			FROM json_each(interests)
+			WHERE json_each.value IN (${param.map(i => `'${i}'`).join(",")})
+			)`)
+		});
+
+		let geminiProfile = await generate(prompts.analysis(results, param));
+		res.json(JSON.parse(geminiProfile.candidates[0].content.parts[0].text));
+	}
+	catch (error)
+	{
+		console.error('Error querying database:', error);
+		return res.status(500).json({ error: 'Internal Server Error' });
+	}
 });
 
-app.post('/city/:city', async (req, res) => {
-  await handle(req, res, async () => {
-    return await generate(prompts.whatAbout(req.params.city, req.body.interests));
-  });
+app.post('/city/:city', async (req, res) =>
+{
+	await handle(req, res, async () =>
+	{
+		return await generate(prompts.whatAbout(req.params.city, req.body.interests));
+	});
 });
 
-app.post('/cities', async (req, res) => {
-  await handle(req, res, async () => {
-    return await generate(prompts.whatAboutAll(req.body.cities, req.body.interests));
-  });
+app.post('/cities', async (req, res) =>
+{
+	await handle(req, res, async () =>
+	{
+		return await generate(prompts.whatAboutAll(req.body.cities, req.body.interests));
+	});
 });
 
-app.post('/interests', async (req, res) => {
-  await findInterests(req, res, async () => {
-    return await generate(prompts.whatAboutInterests(req.body.interests));
-  });
+app.post('/interests', async (req, res) =>
+{
+	await findInterests(req, res, async () =>
+	{
+		return await generate(prompts.whatAboutInterests(req.body.interests));
+	});
 });
+
 app.listen(PORT, () => console.log(`API listening to http://localhost:${PORT}`));
