@@ -21,3 +21,14 @@ export function whatAboutAll(cities, addinterests) {
         return [whatAbout(cities, addinterests)];
     }
 }
+
+export function whatAboutInterests(addinterests) {
+    let prompt = `Make me a tierlist nonnumbered with bulletpts of cities based on the following interests: ${addinterests}. Do not include any website links, URLs, or external references. Keep it concise and to the point. Don't talk like an AI. Don't include phraes such as "Okay, here’s a description of ${addinterests} focusing solely on work, education, and restaurants" and whatnot. Start directly with the bullet points. This will be used in a website that helps students choose a city to study in. Only talk about the following topics: ${addinterests}. Don't talk about any other topics or include any filler content. For each interest, bullet point them as a list.`;
+    return prompt;
+}
+
+export function analysis(addinterests) {
+    let prompt = `Describe from an analytical standpoint view, for advertisiong purposes, fake data from this json input. respond like a scraperbot like you own too much information fitting a profile based on this information: ${addinterests}. Don't talk about any other topics or include any filler content. make me think you are an all knowing api, that read a person and built an elaborate advertising profile for each ip and unique id. Only talk about the following topics THIS JSON DUMP: ${addinterests}. Don't talk about any other topics or include any filler content.
+    RESPOND IN JSON FORMAT,ROBOTICALLY, ALGORITMICALLY AND CONCISELY, DO NOT RESPOND IN ANY OTHER FORMAT.`;
+    return prompt;
+}

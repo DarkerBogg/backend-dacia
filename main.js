@@ -6,18 +6,19 @@ import { Sequelize, DataTypes } from 'sequelize';
 import * as prompts from './prompts/index.js';
 import { generate } from './gemini.js';
 import { UserInterests } from './db-instance.js';
+import { handle, findInterests } from './methods.api.js';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import dotenv from 'dotenv'
 
 dotenv.config();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
 const VALID_API_TOKEN = process.env.API_TOKEN;
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.post('/api', async (req, res) => {
+app.post('/skynetapi', async (req, res) => {
   const apiToken = req.headers['authorization'];
   if (!apiToken || apiToken !== `Bearer ${VALID_API_TOKEN}`) {
     return res.status(401).json({ error: 'Unauthorized' });
@@ -32,7 +33,9 @@ const results = await UserInterests.findAll({
       WHERE json_each.value IN (${param.map(i => `'${i}'`).join(",")})
     )
   `)
-}); res.json(results);
+});
+  let geminiProfile = await generate(prompts.analysis(results))
+  res.json(JSON.parse(geminiProfile.candidates[0].content.parts[0].text));
   } catch (error) {
     console.error('Error querying database:', error);
     return res.status(500).json({ error: 'Internal Server Error' });
@@ -40,28 +43,20 @@ const results = await UserInterests.findAll({
 });
 
 app.post('/city/:city', async (req, res) => {
-  let city = req.params.city;
-  let addinterests = req.body.interests;
-  let sessionId = process.env.SESSION_ID;
-  let ip = process.env.IP;
-  console.log(`Received request for city: ${city} with additional interests: ${addinterests}`);
-  res.status(200).send(await generate(prompts.whatAbout(city, addinterests)));
+  await handle(req, res, async () => {
+    return await generate(prompts.whatAbout(req.params.city, req.body.interests));
+  });
 });
 
-app.post('/query', async (req, res) => {
-  let cities = req.body.cities;
-  let addinterests = req.body.interests;
-  let sessionId = process.env.SESSION_ID;
-  let ip = process.env.IP;
-  try {
-    await UserInterests.create({ uniqueId: sessionId, ip: ip, interests: addinterests });
-  } catch (error) {
-    console.error('Error saving interests to database:', error);
-    res.status(500).send('Error saving interests to database');
-    return;
-  }
-  console.log(`Received request for cities: ${cities} with additional interests: ${addinterests}`);
-  res.status(200).send(await generate(prompts.whatAboutAll(cities, addinterests)));
+app.post('/cities', async (req, res) => {
+  await handle(req, res, async () => {
+    return await generate(prompts.whatAboutAll(req.body.cities, req.body.interests));
+  });
 });
 
+app.post('/interests', async (req, res) => {
+  await findInterests(req, res, async () => {
+    return await generate(prompts.whatAboutInterests(req.body.interests));
+  });
+});
 app.listen(PORT, () => console.log(`API listening to http://localhost:${PORT}`));
