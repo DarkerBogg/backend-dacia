@@ -5,7 +5,7 @@ export const sequelize = new Sequelize({
   storage: "./db/analytics.sqlite"
 });
 
-const UserInterests = sequelize.define('Interests',{
+export const UserInterests = sequelize.define('Interests',{
     id:{
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -16,13 +16,18 @@ const UserInterests = sequelize.define('Interests',{
         allowNull: false
     },
     ip: {
-        type: DataTypes.STRING,
-        allowNull: false
+        type: DataTypes.STRING
     },
-    interest: {
+    interests: {
         type: DataTypes.JSON,
         defaultValue: []
     },
 },{
     tableName: 'interests'
 })
+
+sequelize.sync().then(() => {
+    console.log('Database & tables created!');
+}).catch((error) => {
+    console.error('Error creating database:', error);
+});
