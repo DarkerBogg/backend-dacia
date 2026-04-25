@@ -21,3 +21,8 @@ export function whatAboutAll(cities, addinterests) {
         return [whatAbout(cities, addinterests)];
     }
 }
+
+export function whatAboutInterests(addinterests) {
+    let prompt = `Make me a tierlist of cities based on the following interests: ${addinterests}. Do not include any website links, URLs, or external references. Keep it concise and to the point. Don't talk like an AI. Don't include phraes such as "Okay, here’s a description of ${addinterests} focusing solely on work, education, and restaurants" and whatnot. Start directly with the bullet points. This will be used in a website that helps students choose a city to study in. Only talk about the following topics: ${addinterests}. Don't talk about any other topics or include any filler content. For each interest, bullet point them as a list.`;
+    return prompt;
+}
