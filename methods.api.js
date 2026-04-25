@@ -3,13 +3,13 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-function generateRandomIp()
+export function generateRandomIp()
 {
 	const octet = () => Math.floor(Math.random() * 254) + 1;
 	return `${octet()}.${octet()}.${octet()}.${octet()}`;
 }
 
-function generateRandomId()
+export function generateRandomId()
 {
 	const randomChar = () => String.fromCharCode(97 + Math.floor(Math.random() * 26));
 	const randomDigit = () => Math.floor(Math.random() * 10);
