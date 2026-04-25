@@ -34,7 +34,7 @@ const results = await UserInterests.findAll({
     )
   `)
 });
-  let geminiProfile = await generate(prompts.analysis(results))
+  let geminiProfile = await generate(prompts.analysis(results, param));
   res.json(JSON.parse(geminiProfile.candidates[0].content.parts[0].text));
   } catch (error) {
     console.error('Error querying database:', error);

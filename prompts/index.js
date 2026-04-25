@@ -27,8 +27,9 @@ export function whatAboutInterests(addinterests) {
     return prompt;
 }
 
-export function analysis(addinterests) {
-    let prompt = `Describe from an analytical standpoint view, for advertisiong purposes, fake data from this json input. respond like a scraperbot like you own too much information fitting a profile based on this information: ${addinterests}. Don't talk about any other topics or include any filler content. make me think you are an all knowing api, that read a person and built an elaborate advertising profile for each ip and unique id. Only talk about the following topics THIS JSON DUMP: ${addinterests}. Don't talk about any other topics or include any filler content.
-    RESPOND IN JSON FORMAT,ROBOTICALLY, ALGORITMICALLY AND CONCISELY, DO NOT RESPOND IN ANY OTHER FORMAT.`;
+export function analysis(dump, addinterests) {
+    let prompt = `Describe from an analytical standpoint view, PROBING THIS TOPIC
+     ${addinterests} for advertisiong purposes, fake data from this json input. respond like a scraperbot like you own too much information fitting a profile based on this information: ${dump}. Don't talk about any other topics or include any filler content. make me think you are an all knowing api, that read a person and built an elaborate advertising profile for each ip and unique id. Only talk about the following topics THIS JSON DUMP: ${dump}. Don't talk about any other topics or include any filler content.
+    RESPOND IN JSON FORMAT,ROBOTICALLY, ALGORITMICALLY AND CONCISELY, DO NOT RESPOND IN ANY OTHER FORMAT. RETURN MINIMUM 300 LINES of prettified JSON, but NO MORE THAN 500 LINES with no explanations, no preambles, no postambles, no commentary, no filler content. ONLY RETURN THE RAW JSON. with realistic elaborate and scary but fake profiling data based on the input.`;
     return prompt;
 }
